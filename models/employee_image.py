@@ -5,6 +5,8 @@ from PIL import Image
 import io
 import base64
 import re
+import face_recognition
+import numpy as np
 
 
 class EmployeeImage(models.Model):
@@ -63,9 +65,53 @@ class EmployeeImage(models.Model):
             return "Unknown"
 
     @api.model
+    def recognize_employee_face(self, image_data):
+        # Decode the base64 image
+        image = Image.open(io.BytesIO(base64.b64decode(image_data)))
+        image = np.array(image)  # Convert to numpy array for face_recognition
+
+        # Detect faces in the uploaded image
+        face_locations = face_recognition.face_locations(image)
+        if not face_locations:
+            return {"error": "No faces detected in the image."}
+
+        # Encode the detected face
+        uploaded_face_encoding = face_recognition.face_encodings(image, face_locations)[0]
+
+        # Fetch all employees with face images
+        employees = self.env['hr.employee'].search([('face_image', '!=', False)])
+        for employee in employees:
+            # Decode the employee's face image
+            employee_face_image = Image.open(io.BytesIO(base64.b64decode(employee.face_image)))
+            employee_face_image = np.array(employee_face_image)
+
+            # Encode the employee's face
+            employee_face_encoding = face_recognition.face_encodings(employee_face_image)
+            if not employee_face_encoding:
+                continue
+
+            # Compare faces
+            match = face_recognition.compare_faces([employee_face_encoding[0]], uploaded_face_encoding)
+            if match[0]:
+                return {
+                    'name': employee.name,
+                    'department': employee.department_id.name if employee.department_id else "Unknown",
+                    'manager_name': employee.parent_id.name if employee.parent_id else "Unknown",
+                    'result': "Face recognized successfully.",
+                }
+
+        return {"error": "No matching employee found."}
+
+    @api.model
     def create(self, vals):
         # Detect employee details when an image is uploaded
         if 'image' in vals:
-            detection_result = self.detect_employee_details(vals['image'])
-            vals.update(detection_result)
+            # Try face recognition first
+            face_recognition_result = self.recognize_employee_face(vals['image'])
+            if 'error' not in face_recognition_result:
+                vals.update(face_recognition_result)
+            else:
+                # Fallback to text detection if face recognition fails
+                detection_result = self.detect_employee_details(vals['image'])
+                vals.update(detection_result)
         return super(EmployeeImage, self).create(vals)

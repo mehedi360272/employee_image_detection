@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+    <!-- Form View for employee.image -->
     <record id="view_employee_image_form" model="ir.ui.view">
         <field name="name">employee.image.form</field>
         <field name="model">employee.image</field>
@@ -6,29 +8,38 @@
             <form>
                 <sheet>
                     <group>
+                        <!-- Field to upload an image -->
                         <field name="image" widget="image" class="oe_avatar"/>
-                        <field name="name"/>
-                        <field name="department"/>
-                        <field name="manager_name"/>
-                        <field name="result" widget="text" readonly="1"/>
+
+                        <!-- Fields to display employee details -->
+                        <field name="name" string="Employee Name"/>
+                        <field name="department" string="Department"/>
+                        <field name="manager_name" string="Manager Name"/>
+
+                        <!-- Field to display the OCR or face recognition result -->
+                        <field name="result" widget="text" readonly="1" string="Detection Result"/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
+    <!-- Tree View for employee.image -->
     <record id="view_employee_image_tree" model="ir.ui.view">
         <field name="name">employee.image.tree</field>
         <field name="model">employee.image</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="name"/>
-                <field name="department"/>
-                <field name="manager_name"/>
+                <!-- Columns to display in the tree view -->
+                <field name="name" string="Employee Name"/>
+                <field name="department" string="Department"/>
+                <field name="manager_name" string="Manager Name"/>
             </tree>
         </field>
     </record>
 
+
+    <!-- Action to open the employee.image model -->
     <record id="action_employee_image" model="ir.actions.act_window">
         <field name="name">Employee Images</field>
         <field name="res_model">employee.image</field>
