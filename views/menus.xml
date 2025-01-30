@@ -1,0 +1,13 @@
+<odoo>
+    <data>
+        <menuitem
+                id="menu_employee_image_root"
+                name = "Employee Image Detection" />
+        <menuitem
+                id="menu_employee_image"
+                name = "Employee Images"
+                parent="menu_employee_image_root"
+                action="action_employee_image"
+                sequence="100"/>
+    </data>
+</odoo>
