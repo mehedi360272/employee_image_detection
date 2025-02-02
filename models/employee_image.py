@@ -40,7 +40,7 @@ class EmployeeImage(models.Model):
         return {
             'effect': {
                 'fadeout': 'slow',
-                'message': "Employee detection completed!",
+                'message': "Image detection completed!",
                 'type': 'rainbow_man',
             }
         }
