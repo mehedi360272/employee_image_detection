@@ -20,7 +20,6 @@ Long description of module's purpose
         'security/ir.model.access.csv',
         'views/employee_image_views.xml',
         'views/hr_employee_views.xml',
-        'views/templates.xml',
         'views/menus.xml',
     ],
 

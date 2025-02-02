@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+import logging
 import pytesseract
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 from PIL import Image
@@ -7,6 +8,9 @@ import base64
 import re
 import face_recognition
 import numpy as np
+
+_logger = logging.getLogger(__name__)
+
 
 
 class EmployeeImage(models.Model):
@@ -18,6 +22,28 @@ class EmployeeImage(models.Model):
     manager_name = fields.Char(string='Manager Name', readonly=True)
     image = fields.Binary(string='Upload Image', required=True)
     result = fields.Text(string='Detection Result', readonly=True)
+
+    def action_detect_employee(self):
+        """Trigger employee detection manually from a button click."""
+        if not self.image:
+            return
+
+        # First, try face recognition
+        face_recognition_result = self.recognize_employee_face(self.image)
+        if 'error' not in face_recognition_result:
+            self.write(face_recognition_result)
+        else:
+            # Fallback to text detection
+            detection_result = self.detect_employee_details(self.image)
+            self.write(detection_result)
+
+        return {
+            'effect': {
+                'fadeout': 'slow',
+                'message': "Employee detection completed!",
+                'type': 'rainbow_man',
+            }
+        }
 
     @api.model
     def detect_employee_details(self, image_data):

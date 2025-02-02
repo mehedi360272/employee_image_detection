@@ -6,6 +6,8 @@
         <field name="model">employee.image</field>
         <field name="arch" type="xml">
             <form>
+                <button name="action_detect_employee" type="object" string="Check Image"
+                                class="btn-primary"/>
                 <sheet>
                     <group>
                         <!-- Field to upload an image -->
