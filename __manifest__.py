@@ -12,7 +12,7 @@ Long description of module's purpose
     'website': "https://github.com/mehedi360272",
 
     'category': 'AI',
-    'version': '0.1',
+    'version': '17.0',
 
     'depends': ['base', 'hr'],
 
